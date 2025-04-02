@@ -1,6 +1,20 @@
+# Use imagem leve com Python
+FROM python:3.10-slim
 
-FROM python:3.10
+# Instalar dependências básicas
+RUN apt-get update && apt-get install -y build-essential
+
+# Criar diretório de trabalho
 WORKDIR /app
-COPY backend /app/backend
-RUN pip install --no-cache-dir -r /app/backend/requirements.txt
-CMD ["uvicorn", "backend.main:app", "--host", "0.0.0.0", "--port", "8000"]
+
+# Copiar tudo
+COPY . .
+
+# Entrar na pasta backend
+WORKDIR /app/backend
+
+# Instalar dependências Python
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Rodar o app FastAPI
+CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
