@@ -9,7 +9,7 @@ sys.path.append(str(BASE_DIR / "memory"))
 sys.path.append(str(BASE_DIR / "tools"))
 sys.path.append(str(BASE_DIR / "interface"))
 
-from engine import process_prompt
+from ..agent.engine import process_prompt
 from memory.logger import logger
 from voice import speak
 
