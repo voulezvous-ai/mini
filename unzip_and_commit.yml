@@ -1,0 +1,42 @@
+name: Unzip and Commit Two ZIPs
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  unzip_and_commit:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout do repositório
+        uses: actions/checkout@v3
+
+      - name: Instalar unzip
+        run: sudo apt-get install -y unzip
+
+      - name: Listar arquivos ZIP (debug)
+        run: ls -la *.zip || echo "Nenhum .zip encontrado"
+
+      - name: Criar pasta de destino (opcional)
+        run: mkdir -p ./unzipped
+
+      - name: Descompactar todos os arquivos ZIP encontrados
+        run: |
+          for zip in *.zip; do
+            [ -e "$zip" ] || continue
+            echo "Descompactando $zip..."
+            unzip -o "$zip" -d ./unzipped
+          done
+
+      - name: Remover os arquivos ZIP após extração
+        run: rm -f *.zip
+
+      - name: Commit dos arquivos extraídos
+        run: |
+          git config user.name "github-actions"
+          git config user.email "github-actions@github.com"
+          git add .
+          git commit -m "Unzipped both files and committed contents" || echo "Nada para commitar"
+          git push origin main
