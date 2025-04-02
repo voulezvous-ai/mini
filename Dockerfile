@@ -9,6 +9,9 @@ WORKDIR /app
 # Copia todos os arquivos para dentro do container
 COPY . .
 
+# Define o path do python
+ENV PYTHONPATH=/app
+
 # Instala as dependências do backend
 # (Assume que requirements.txt está em /app/backend ou que copiamos antes)
 # Copiando requirements.txt primeiro para otimizar o cache
