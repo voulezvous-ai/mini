@@ -1,0 +1,25 @@
+version: '3.9'
+
+services:
+  web:
+    build: .
+    ports:
+      - "8000:8000"
+    environment:
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+      - MONGODB_URI=${MONGODB_URI}
+      - CELERY_BROKER_URL=${CELERY_BROKER_URL}
+      - CELERY_RESULT_BACKEND=${CELERY_RESULT_BACKEND}
+      - SENTRY_DSN=${SENTRY_DSN}
+      - API_KEY=${API_KEY}
+    depends_on:
+      - redis
+      - mongo
+
+  redis:
+    image: redis:alpine
+
+  mongo:
+    image: mongo:latest
+    ports:
+      - "27017:27017"

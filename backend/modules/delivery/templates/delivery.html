@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Delivery Tracking</title>
+    <script>
+        let ws;
+        function connect(uuid) {
+            ws = new WebSocket("ws://" + location.host + "/ws/delivery/" + uuid);
+            ws.onmessage = function(event) {
+                const msg = JSON.parse(event.data);
+                const log = document.getElementById("log");
+                const div = document.createElement("div");
+                
+if (msg.type === 'new_message' && msg.message_type === 'image') {
+    const img = document.createElement('img');
+    img.src = msg.image_url;
+    img.style.maxWidth = '100px';
+    log.appendChild(img);
+}
+
+div.innerText = msg.type + ": " + (msg.content || JSON.stringify(msg));
+                log.appendChild(div);
+            };
+        }
+        function sendMessage() {
+            const input = document.getElementById("msg");
+            ws.send(JSON.stringify({type: "send_message", content: input.value}));
+            input.value = "";
+        }
+        window.onload = function() {
+            connect("{{ uuid }}");
+        };
+    </script>
+</head>
+<body>
+    <h1>Delivery Tracker</h1>
+    <div id="log" style="border:1px solid #ccc; height:200px; overflow:auto;"></div>
+    <input id="msg" placeholder="Type message"/>
+    <button onclick="sendMessage()">Send</button>
+</body>
+</html>
