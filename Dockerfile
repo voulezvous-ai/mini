@@ -9,13 +9,18 @@ WORKDIR /app
 # Copia todos os arquivos para dentro do container
 COPY . .
 
-# Entra na pasta backend (onde está o main.py)
-WORKDIR /app/backend
-
-# Atualiza o pip e instala as dependências, incluindo o uvicorn completo
+# Instala as dependências do backend
+# (Assume que requirements.txt está em /app/backend ou que copiamos antes)
+# Copiando requirements.txt primeiro para otimizar o cache
+COPY backend/requirements.txt backend/requirements.txt
 RUN pip install --no-cache-dir --upgrade pip \
-    && pip install --no-cache-dir -r requirements.txt \
+    && pip install --no-cache-dir -r backend/requirements.txt \
     && pip install "uvicorn[standard]"
 
-# Comando para iniciar o servidor FastAPI
-CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
+# Expor a porta que a aplicação vai usar (opcional mas boa prática)
+# A porta real será definida pelo Railway ou variável PORT
+EXPOSE 8000
+
+# Comando para iniciar o servidor FastAPI a partir do diretório /app
+# O Railway irá provavelmente substituir a porta 8000 pela variável $PORT
+CMD ["uvicorn", "backend.main:app", "--host", "0.0.0.0", "--port", "8000"]
